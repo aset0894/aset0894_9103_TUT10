@@ -1,117 +1,125 @@
-let img;  // store the image
-let numSegments = 10; // determine how many segments to make
-let segments = [];  // where we'll store each individual segment
-let drawSegments = false; // used to determine if we draw the raw image or the rectangles
+let img;
+let segments = []; //where we will store each segment
+let numSegments = 50; //how many segments to create
+let drawSegments = false;
 
-let imgDrwPrps = {aspect: 0, width: 0, height: 0, xOffset:0, yOffset: 0};
+let imgDrwPrps = {aspect: 0, width: 0, height:0, xOffset:0, yOffset:0};
 
 let canvasAspectRatio = 0;
 
-function preload(){
-  img = loadImage("assets/Mona_Lisa.jpg");
+let pixelColour;
+
+function preload() {
+    img = loadImage("assets/Mona_Lisa.jpg");
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);  // set canvas size to entire window
+    createCanvas(windowWidth, windowHeight); 
+    
+    canvasAspectRatio = width/height;
+    imgDrwPrps.aspect = img.width/img.height;
+    calculateImageDrawProps();
 
-  imgDrwPrps.aspect = img.width/img.height;
-  canvasAspectRatio = width/height;
+    //calculate width and height of the segments
+    let segWidth = img.width/numSegments;
+    let segHeight = img.height/numSegments;
 
-  calculateImageDrawProps()
-
-  // calculate width and height of the segments
-  let segmentWidth = img.width/numSegments;
-  let segmentHeight = img.height/numSegments;
-
-  // use nested for loops to create and position each segment
-  for (let YPos = 0; YPos < img.height; YPos += segmentHeight){  // row
-    for (let XPos = 0; XPos < img.width; XPos += segmentWidth){  // column
-      let fillColor = img.get(XPos + segmentWidth/2, YPos + segmentHeight/2);
-      let segment = new ImageSegment(XPos/segmentWidth, YPos/segmentHeight, fillColor);
-      segments.push(segment);
+    //set up all the image segments
+    for (let yPos = 0; yPos < img.height; yPos += segHeight) { //vertical
+        for (let xPos = 0; xPos < img.width; xPos += segWidth) { //horizontal
+            let fillColor = img.get(xPos + segWidth/2, yPos + segHeight/2);
+            let segment = new ImageSegment(xPos/segWidth, yPos/segHeight, fillColor); //create segment
+            segment.calculateSegDrawProps();
+            segments.push(segment); //add the segment to the end of the segments array
+        }
     }
-  }
+    pixelColour = color(0);
 }
 
-function draw() {
-  background(0);
-  if (drawSegments){
-    // for each element in the array segments, do something
-    for(const segment of segments){
-      segment.draw();
-    }
-  }else{
-    image(img, imgDrwPrps.xOffset, imgDrwPrps.yOffset, imgDrwPrps.width, imgDrwPrps.height);
-  }
-
-}
-
-function keyPressed(){
-  if(key == " "){
-    // a trick to invert a boolean
-    drawSegments = !drawSegments;
-  }
-}
-
-function windowResized(){
-  resizeCanvas(windowWidth,windowHEihgt);
-  calculateImageDrawProps();
-}
-function calculateImageDrawProps(){
-  canvasAspectRatio = width / height;
-  // if the image is wider than the canvas
-  if(imgDrwPrps.aspect > canvasAspectRatio){
-    //then draw the image to the width of the canvas
-    imgDrwPrps.width= width;
-    // and calculate the height based on the aspect ratio
-    imgDrwPrps.height = width/ imgDrwPrps.aspect;
-    imgDrwPrps.yOffset = (height - imgDrwPrps.height)/2;
+function calculateImageDrawProps() {
+  if (imgDrwPrps.aspect > canvasAspectRatio) { //case where image is wider than canvas
+    //draw the image to the width of the canvas
+    imgDrwPrps.width = width;
+    imgDrwPrps.height = width/imgDrwPrps.aspect;
     imgDrwPrps.xOffset = 0;
+    imgDrwPrps.yOffset = (height - imgDrwPrps.height) / 2;
 
-  } else if(imgDrwPrps.aspect < canvasAspectRatio){
-    // otherwise draw the iamge to the height of the canvas
-    imgDrwPrps.height = height;
+  } else if (imgDrwPrps.aspect < canvasAspectRatio) { //case where image is taller than canvas
     imgDrwPrps.width = height * imgDrwPrps.aspect;
-    imgDrwPrps.xOffset = (width - imgDrwPrps.width)/2;
+    imgDrwPrps.height = height;
+    imgDrwPrps.xOffset = (width - imgDrwPrps.width) / 2
     imgDrwPrps.yOffset = 0;
 
-  } else if (imgDrwPrps.aspect == canvasAspectRatio){
-    // if the aspect ratios are the same we can draw the image to the canvas size
+  } else if (imgDrwPrps.aspect == canvasAspectRatio) { //The case where they are the same
     imgDrwPrps.width = width;
     imgDrwPrps.height = height;
     imgDrwPrps.xOffset = 0;
     imgDrwPrps.yOffset = 0;
   }
-
 }
+
+function draw() {
+  background(255);
+    if (drawSegments) {
+        for (const segment of segments) {
+            segment.draw();
+        }
+    } else {
+        image(img, imgDrwPrps.xOffset, imgDrwPrps.yOffset, imgDrwPrps.width, imgDrwPrps.height);
+    }
+    
+    stroke(255);
+    fill(pixelColour);
+    //circle(mouseX, mouseY, 40);
+}
+
+function mouseMoved() {
+    pixelColour = img.get(mouseX, mouseY); //read the colour under the mouse and assign to pixelcolour
+}
+
+function keyPressed() {
+    if (key == " ") {
+        drawSegments = !drawSegments;
+    }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  canvasAspectRatio = width/height;
+  calculateImageDrawProps();
+
+  segments.forEach(segment => {
+    segment.calculateSegDrawProps();
+  });
+}
+
 
 class ImageSegment {
 
-  constructor(columnPosIn, rowPosIn, fillColorIn) {
-    //these parameters are used to set the internal properties of an instance of the segment
-    //These parameters are named as imageSource as they are derived from the image we are using
-    this.columnPos = columnPosIn;
-    this.rowPos =rowPosIn;
-    this.fillColor = fillColorIn;
+    constructor(rowPosIn, colPosIn, fillColor) {
+      this.rowPos = rowPosIn;
+      this.colPos = colPosIn;  
+      
+      this.xPos = 0;
+      this.yPos = 0;
+      this.width = 0;
+      this.height = 0;
+      this.fillColor = fillColor;
+    }
+    
+    calculateSegDrawProps() {
+      this.width = imgDrwPrps.width/numSegments;
+      this.height = imgDrwPrps.height/numSegments;
 
-    this.XPos = 0;
-    this.YPos = 0;
-    this.width = 0;
-    this.height = 0;
-  }
+      this.xPos = this.rowPos * this.width + imgDrwPrps.xOffset;
+      this.yPos = this.colPos * this.height + imgDrwPrps.yOffset;
+    }
 
-  calculateSegDrawPRops(){
-    this.width = imgDrwPrps.width/numSegments;
-    this.height = imgDrwPrps.height/numSegments;
-
-    this.xPos = this.rowPos * this.width + imgDrwPrps.xOffset;
-    this.yPos = this.columnPos * this.height + imgDrwPrps.yOffset;
-  }
-
-  draw() {
-    //let's draw the segment to the canvas, for now we will draw it as an empty rectangle so we can see it
-    stroke(0);
-    fill(this.fillColor);
-    rect(this.XPos, this.YPos, this.width, this.height);
-  }
+    draw() {
+        fill(this.fillColor);
+        stroke(0);
+       
+        rect(this.xPos, this.yPos, this.width, this.height);
+        //ellipse(this.xPos + this.width/2, this.yPos + this.width/2, this.width, this.height)
+    }
 }
