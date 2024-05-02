@@ -27,11 +27,15 @@ The coding technique that can be implemented to create such imaging technique is
 
 ![Procedural generation in Unity](assets/Perlin_Noise_unity.png)
 
+(Perlin Noise: Beginners Guide EP 2 - Unity3D, 2020)
+
 [Link to Perlin Noise's procedural generation code in Unity](https://adrianb.io/2014/08/09/perlinnoise.html)
 
 Additionally, I can incorporate Perlin noise to the colors as well and transform the 2D painting into a playful 3D world.
 
 ![Procedural generation in P5js](assets/perlin_noise_p5js.png)
+
+(p5.js Coding Tutorial | Procedural Terrain Generation, 2023)
 
 [Link to Perlin Noise's procedural generation code in p5js](https://editor.p5js.org/pattvira/sketches/AYp1dlGoU)
 
@@ -41,4 +45,8 @@ Reference
 
 Awaldner. (n.d.). [Minecraft world backgrounds]. Retrieve May 2, 2024, from https://wallpapercave.com/w/wp3174099
 
+CodingWithRus. (2020). *Perlin Noise: Beginners Guide EP 2 - Unity3D* [Video]. YouTube. https://www.youtube.com/watch?v=WB38YL_3ctY&list=PLu2uAkIZ4shpPdCTIjEpvhD8U-RRM3Y2F&index=2&ab_channel=CodingWithRus
+
 Pham, T. (2010). *Broadway Boogie-Woogie the Animation (Lost in the City)* [Video]. YouTube. https://www.youtube.com/watch?v=4b85UBqUy28&ab_channel=TungPham
+
+Vira, P. (2023). *p5.js Coding Tutorial | Procedural Terrain Generation (Perlin Noise)* [Video]. YouTube. https://www.youtube.com/watch?v=fN0Wa9mvT60&t=7s&ab_channel=PattVira
