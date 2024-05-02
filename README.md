@@ -31,7 +31,7 @@ The coding technique that can be implemented to create such imaging technique is
 
 Additionally, I can incorporate Perlin noise to the colors as well and transform the 2D painting into a playful 3D world.
 
-![Procedural generation in P5js](assets/Perlin_Noise_p5js.png)
+![Procedural generation in P5js](assets/perlin_noise_p5js.png)
 
 [Link to Perlin Noise's procedural generation code in p5js](https://editor.p5js.org/pattvira/sketches/AYp1dlGoU)
 
